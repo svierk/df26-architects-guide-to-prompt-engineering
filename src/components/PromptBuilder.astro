@@ -1,0 +1,542 @@
+---
+import { controlMoves } from '../data/controls';
+import { demos } from '../data/demos';
+
+/** Field metadata for the four editors, in protocol order. */
+const fields = [
+  {
+    id: 'context',
+    key: 'CONTEXT',
+    label: 'Context',
+    hint: 'Name the objects, classes and org — not the category.',
+    placeholder:
+      'Object/field metadata for Retail_Order__c and Warehouse_Transfer__c in the UAT sandbox, plus OrderSyncService.cls …'
+  },
+  {
+    id: 'constraints',
+    key: 'CONSTRAINTS',
+    label: 'Constraints',
+    hint: 'Pair every prohibition with the fallback action.',
+    placeholder:
+      'Never propose a custom field on a managed FinServ__ object — propose a custom object with a lookup instead. Flag anything inferred …'
+  },
+  {
+    id: 'tools',
+    key: 'TOOLS',
+    label: 'Tools',
+    hint: 'Name the exact API or search the model may call to verify itself.',
+    placeholder: 'Tooling API MetadataComponentDependency (Beta), Metadata Describe API, static code search across …'
+  },
+  {
+    id: 'output',
+    key: 'OUTPUT',
+    label: 'Output + validation',
+    hint: 'Define the artifact shape and the self-check it must pass.',
+    placeholder:
+      'merge-readiness-scorecard.md — table (Object, Risk Type, Severity, Blocker, Remediation). Self-check: every Blocker = Yes row must cite the field or class it flags …'
+  }
+] as const;
+
+/** Presets exposed to the client script: the three worked examples. */
+const presets = demos.map((demo) => ({
+  id: demo.id,
+  label: demo.label,
+  title: demo.title,
+  values: demo.protocol
+}));
+
+/** The protocol labels used when the prompt is assembled. */
+const labels = Object.fromEntries(
+  controlMoves.map((move) => [move.key.toLowerCase(), move.key === 'OUTPUT' ? 'OUTPUT + VALIDATION' : move.key])
+);
+---
+
+<section class="section" id="builder">
+  <div class="container">
+    <p class="section-eyebrow">Interactive</p>
+    <h2 class="section-title">Build your own prompt</h2>
+    <p class="section-subtitle">
+      Fill the four control moves and the prompt assembles itself on the right. The readiness check applies the six
+      rules of the field guide to what you wrote — it is the same self-check you would ask a model to run. Your draft
+      stays in this browser.
+    </p>
+
+    <div class="builder">
+      <div class="builder__editor">
+        <div class="builder__toolbar">
+          <label class="builder__preset">
+            <span>Start from</span>
+            <select id="builder-preset">
+              <option value="">Blank prompt</option>
+              {presets.map((preset) => <option value={preset.id}>{preset.title}</option>)}
+            </select>
+          </label>
+          <button class="btn btn--small" type="button" id="builder-reset">Clear all</button>
+        </div>
+
+        {
+          fields.map((field) => (
+            <div class="field">
+              <label class="field__label" for={`field-${field.id}`}>
+                <span class="field__key">{field.key}</span>
+                {field.label}
+              </label>
+              <p class="field__hint">{field.hint}</p>
+              <textarea
+                class="field__input"
+                id={`field-${field.id}`}
+                data-field={field.id}
+                rows="4"
+                placeholder={field.placeholder}
+              />
+            </div>
+          ))
+        }
+      </div>
+
+      <div class="builder__preview">
+        <div class="preview__panel">
+          <div class="preview__bar">
+            <span class="preview__file">your-prompt.txt</span>
+            <button class="btn btn--small" type="button" data-copy="#builder-output">
+              <span data-copy-label>Copy</span>
+            </button>
+          </div>
+          <pre class="code preview__code" id="builder-output"></pre>
+        </div>
+
+        <div class="checks card">
+          <div class="checks__head">
+            <h3 class="checks__title">Readiness check</h3>
+            <span class="checks__score" id="checks-score">0 / 6</span>
+          </div>
+          <div class="checks__meter" aria-hidden="true"><i id="checks-bar"></i></div>
+          <ul class="checks__list" id="checks-list"></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script is:inline type="application/json" id="builder-data" set:html={JSON.stringify({ presets, labels })} />
+
+<script>
+  type FieldId = 'context' | 'constraints' | 'tools' | 'output';
+  type Draft = Record<FieldId, string>;
+
+  interface Preset {
+    id: string;
+    label: string;
+    title: string;
+    values: Draft;
+  }
+
+  const FIELDS: FieldId[] = ['context', 'constraints', 'tools', 'output'];
+  const STORAGE_KEY = 'df26-prompt-draft';
+
+  const data = JSON.parse(document.getElementById('builder-data')?.textContent ?? '{}') as {
+    presets: Preset[];
+    labels: Record<FieldId, string>;
+  };
+
+  const inputs = new Map<FieldId, HTMLTextAreaElement>();
+  FIELDS.forEach((id) => {
+    const input = document.querySelector<HTMLTextAreaElement>(`[data-field="${id}"]`);
+    if (input) inputs.set(id, input);
+  });
+
+  const output = document.getElementById('builder-output');
+  const checksList = document.getElementById('checks-list');
+  const checksScore = document.getElementById('checks-score');
+  const checksBar = document.getElementById('checks-bar');
+  const presetSelect = document.getElementById('builder-preset') as HTMLSelectElement | null;
+
+  /**
+   * The readiness check. Each entry is a heuristic for one rule of the field
+   * guide - deliberately simple and transparent: it looks for the signals the
+   * rule asks for, so a passing check means the prompt carries that signal,
+   * not that the prompt is good.
+   */
+  const checks: {
+    rule: number;
+    label: string;
+    hint: string;
+    test: (draft: Draft) => boolean;
+  }[] = [
+    {
+      rule: 1,
+      label: 'Context names real artifacts',
+      hint: 'Add API names — Retail_Order__c, OrderSyncService.cls — not “the order object”.',
+      test: (draft) => /(__c|__mdt|__e|__b|\.cls|\.trigger|\bFinServ__|\bnamespace\b)/i.test(draft.context)
+    },
+    {
+      rule: 2,
+      label: 'Context is evidence, not memory',
+      hint: 'Say where the evidence comes from: an org, a sandbox, an export, a spec or a package version.',
+      test: (draft) =>
+        /(org|sandbox|scratch|production|metadata|export|describe|spec|package|api version|attached|pasted)/i.test(
+          draft.context
+        )
+    },
+    {
+      rule: 5,
+      label: 'Constraints pair a guardrail with a fallback',
+      hint: 'Every “never do X” needs an “instead do Y” — otherwise the model picks its own way around.',
+      test: (draft) =>
+        /(never|not|no |exclude|avoid|only|must not|don’t|don't)/i.test(draft.constraints) &&
+        /(instead|rather than|fall back|fallback|otherwise|use |propose |flag )/i.test(draft.constraints)
+    },
+    {
+      rule: 3,
+      label: 'Tools are named and callable',
+      hint: 'Name the API, query or search — Tooling API, Metadata Describe, code search, sandbox execution.',
+      test: (draft) =>
+        /(api|describe|tooling|metadata|soql|query|search|diff|sandbox|execute|cli|spec|dependency|mcp)/i.test(
+          draft.tools
+        )
+    },
+    {
+      rule: 4,
+      label: 'Output has a definite shape',
+      hint: 'Name the artifact and its columns or sections: a .md file, a table, a diagram, a schema.',
+      test: (draft) =>
+        /(\.md\b|\.json\b|\.csv\b|table|diagram|schema|checklist|scorecard|column|matrix|erd|report)/i.test(
+          draft.output
+        )
+    },
+    {
+      rule: 6,
+      label: 'Output carries a self-check',
+      hint: 'Add the check the answer must pass — “every High row must name the limit it violates”.',
+      test: (draft) =>
+        /(self-check|self check|must cite|must name|must include|verify|validate|defaults to|discovery|before it)/i.test(
+          draft.output
+        )
+    }
+  ];
+
+  function readDraft(): Draft {
+    const draft = {} as Draft;
+    FIELDS.forEach((id) => {
+      draft[id] = inputs.get(id)?.value.trim() ?? '';
+    });
+    return draft;
+  }
+
+  function assemble(draft: Draft): string {
+    return FIELDS.filter((id) => draft[id])
+      .map((id) => `${data.labels[id]}:\n${draft[id]}`)
+      .join('\n\n');
+  }
+
+  function render(): void {
+    const draft = readDraft();
+    const prompt = assemble(draft);
+
+    if (output) {
+      output.textContent = prompt;
+      output.classList.toggle('is-empty', prompt === '');
+      if (prompt === '') {
+        output.textContent = 'Fill a control move on the left — or load one of the three worked examples above.';
+      }
+    }
+
+    const passed = checks.filter((check) => check.test(draft));
+
+    if (checksScore) checksScore.textContent = `${passed.length} / ${checks.length}`;
+    if (checksBar) checksBar.style.width = `${(passed.length / checks.length) * 100}%`;
+
+    if (checksList) {
+      checksList.innerHTML = '';
+      checks.forEach((check) => {
+        const ok = check.test(draft);
+        const item = document.createElement('li');
+        item.className = ok ? 'checks__item is-ok' : 'checks__item';
+        item.innerHTML = `
+          <span class="checks__icon" aria-hidden="true">${ok ? '✓' : '○'}</span>
+          <span>
+            <strong>${check.label}</strong>
+            <a class="checks__rule" href="#rule-${check.rule}">Rule ${check.rule}</a>
+            ${ok ? '' : `<span class="checks__hint">${check.hint}</span>`}
+          </span>`;
+        checksList.append(item);
+      });
+    }
+
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
+    } catch {
+      // A browser with site data disabled simply keeps no draft - the builder
+      // itself keeps working.
+    }
+  }
+
+  function apply(draft: Partial<Draft>): void {
+    FIELDS.forEach((id) => {
+      const input = inputs.get(id);
+      if (input) input.value = draft[id] ?? '';
+    });
+    render();
+  }
+
+  function restore(): void {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) apply(JSON.parse(stored) as Draft);
+    } catch {
+      // Ignore unreadable drafts and start from an empty builder.
+    }
+  }
+
+  inputs.forEach((input) => input.addEventListener('input', render));
+
+  presetSelect?.addEventListener('change', () => {
+    const preset = data.presets.find((entry) => entry.id === presetSelect.value);
+    apply(preset ? preset.values : { context: '', constraints: '', tools: '', output: '' });
+  });
+
+  document.getElementById('builder-reset')?.addEventListener('click', () => {
+    if (presetSelect) presetSelect.value = '';
+    apply({ context: '', constraints: '', tools: '', output: '' });
+  });
+
+  // Dispatched by the "Load in builder" buttons of the demo section.
+  document.addEventListener('builder:preset', (event) => {
+    const id = (event as CustomEvent<string>).detail;
+    const preset = data.presets.find((entry) => entry.id === id);
+    if (!preset) return;
+    if (presetSelect) presetSelect.value = id;
+    apply(preset.values);
+    document.getElementById('builder')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  restore();
+  render();
+</script>
+
+<style>
+  .builder {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 1.75rem;
+    align-items: start;
+  }
+
+  .builder__toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .builder__preset {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-right: auto;
+  }
+
+  .builder__preset select {
+    font: inherit;
+    font-size: 0.85rem;
+    color: var(--text);
+    background: var(--bg-raised);
+    border: 1px solid var(--border-strong);
+    border-radius: 9px;
+    padding: 0.4rem 0.6rem;
+    max-width: 15rem;
+  }
+
+  .field {
+    margin-bottom: 1.1rem;
+  }
+
+  .field__label {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 0.2rem;
+  }
+
+  .field__key {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+    border-radius: 6px;
+    padding: 0.1rem 0.4rem;
+  }
+
+  .field__hint {
+    font-size: 0.82rem;
+    color: var(--text-faint);
+    margin: 0 0 0.45rem;
+  }
+
+  .field__input {
+    width: 100%;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    line-height: 1.55;
+    color: var(--text);
+    background: var(--bg-card);
+    border: 1px solid var(--border-strong);
+    border-radius: 10px;
+    padding: 0.7rem 0.85rem;
+    resize: vertical;
+  }
+
+  .field__input::placeholder {
+    color: var(--text-faint);
+  }
+
+  .field__input:focus {
+    border-color: var(--accent);
+    outline: none;
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+
+  .builder__preview {
+    position: sticky;
+    top: 4.75rem;
+    display: grid;
+    gap: 1.1rem;
+  }
+
+  .preview__panel {
+    border: 1px solid var(--border-strong);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+
+  .preview__bar {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.55rem 0.9rem;
+    background: var(--bg-raised);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .preview__file {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-right: auto;
+  }
+
+  .preview__code {
+    border: none;
+    border-radius: 0;
+    min-height: 13rem;
+    max-height: 28rem;
+    overflow-y: auto;
+  }
+
+  .preview__code.is-empty {
+    color: #7f8ea6;
+    font-style: italic;
+  }
+
+  .checks__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .checks__title {
+    font-size: 0.95rem;
+    margin: 0;
+  }
+
+  .checks__score {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--accent-2);
+  }
+
+  .checks__meter {
+    height: 5px;
+    border-radius: 3px;
+    background: var(--border);
+    margin: 0.75rem 0 1rem;
+    overflow: hidden;
+  }
+
+  .checks__meter i {
+    display: block;
+    height: 100%;
+    width: 0;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    transition: width 0.3s ease;
+  }
+
+  .checks__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.65rem;
+  }
+
+  .checks__list :global(.checks__item) {
+    display: grid;
+    grid-template-columns: 1.1rem 1fr;
+    gap: 0.55rem;
+    font-size: 0.88rem;
+    color: var(--text-muted);
+  }
+
+  .checks__list :global(.checks__item.is-ok) {
+    color: var(--text);
+  }
+
+  .checks__list :global(.checks__icon) {
+    color: var(--text-faint);
+    font-weight: 700;
+  }
+
+  .checks__list :global(.is-ok .checks__icon) {
+    color: var(--ok);
+  }
+
+  .checks__list :global(.checks__rule) {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border-radius: 5px;
+    padding: 0.05rem 0.35rem;
+    margin-left: 0.4rem;
+    white-space: nowrap;
+  }
+
+  .checks__list :global(.checks__hint) {
+    display: block;
+    font-size: 0.82rem;
+    color: var(--text-faint);
+    margin-top: 0.2rem;
+  }
+
+  @media (max-width: 980px) {
+    .builder {
+      grid-template-columns: 1fr;
+    }
+
+    .builder__preview {
+      position: static;
+    }
+  }
+</style>

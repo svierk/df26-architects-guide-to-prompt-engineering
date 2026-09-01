@@ -1,0 +1,29 @@
+---
+/**
+ * Renders a protocol block as a `<pre>` whose text is exactly what a reader
+ * copies - no source indentation leaks in. Building the markup as a string
+ * (instead of nesting elements in the template) is what keeps the copied text
+ * clean; `.code__key` is styled globally so the highlighted labels survive it.
+ */
+interface Entry {
+  label: string;
+  text: string;
+}
+
+interface Props {
+  entries: Entry[];
+  id?: string;
+  class?: string;
+}
+
+const { entries, id, class: className = '' } = Astro.props;
+
+const escapeHtml = (value: string) =>
+  value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+const markup = entries
+  .map((entry) => `<span class="code__key">${escapeHtml(entry.label)}:</span>\n${escapeHtml(entry.text)}`)
+  .join('\n\n');
+---
+
+<pre class:list={['code', className]} id={id} set:html={markup} />

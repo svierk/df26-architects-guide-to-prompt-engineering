@@ -1,0 +1,208 @@
+---
+import { session } from '../data/session';
+
+const links = [
+  { href: '#problem', label: 'Problem' },
+  { href: '#controls', label: 'Controls' },
+  { href: '#protocol', label: 'Protocol' },
+  { href: '#builder', label: 'Builder' },
+  { href: '#demos', label: 'Demos' },
+  { href: '#rules', label: 'Rules' }
+];
+---
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav">
+  <nav class="nav__inner container" aria-label="Section navigation">
+    <a class="nav__brand" href="#top">
+      <span class="nav__mark" aria-hidden="true"></span>
+      <span class="nav__brand-text">Architects’ Guide to Prompting</span>
+    </a>
+
+    <ul class="nav__links">
+      {
+        links.map((link) => (
+          <li>
+            <a href={link.href}>{link.label}</a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="nav__actions">
+      <a class="nav__icon" href={session.repo} target="_blank" rel="noopener" aria-label="Repository on GitHub">
+        <svg viewBox="0 0 16 16" width="17" height="17" fill="currentColor" aria-hidden="true">
+          <path
+            d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"
+          ></path>
+        </svg>
+      </a>
+
+      <button class="nav__icon" id="theme-toggle" type="button" aria-label="Toggle colour theme">
+        <svg
+          class="nav__sun"
+          viewBox="0 0 24 24"
+          width="18"
+          height="18"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <circle cx="12" cy="12" r="4"></circle>
+          <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"
+          ></path>
+        </svg>
+        <svg
+          class="nav__moon"
+          viewBox="0 0 24 24"
+          width="18"
+          height="18"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"></path>
+        </svg>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<script>
+  // Theme choice is persisted so it survives a reload and the QR-code visit
+  // of an attendee who set it once during the session.
+  const toggle = document.getElementById('theme-toggle');
+
+  toggle?.addEventListener('click', () => {
+    const next = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
+    document.documentElement.dataset.theme = next;
+    localStorage.setItem('theme', next);
+  });
+</script>
+
+<style>
+  .skip {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    background: var(--bg-raised);
+    border: 1px solid var(--accent);
+    padding: 0.6rem 1rem;
+    border-radius: 0 0 10px 0;
+    z-index: 100;
+  }
+
+  .skip:focus {
+    left: 0;
+  }
+
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: color-mix(in srgb, var(--bg) 82%, transparent);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav__inner {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    height: 3.75rem;
+  }
+
+  .nav__brand {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    color: var(--text);
+    font-weight: 700;
+    font-size: 0.92rem;
+    letter-spacing: -0.01em;
+    margin-right: auto;
+  }
+
+  .nav__brand:hover {
+    text-decoration: none;
+  }
+
+  .nav__mark {
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 3px;
+    background: linear-gradient(120deg, var(--accent), var(--accent-2));
+    box-shadow: 0 0 12px var(--accent-glow);
+  }
+
+  .nav__links {
+    display: flex;
+    gap: 1.15rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 0.88rem;
+  }
+
+  .nav__links a {
+    color: var(--text-muted);
+  }
+
+  .nav__links a:hover {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .nav__actions {
+    display: flex;
+    gap: 0.4rem;
+  }
+
+  .nav__icon {
+    display: inline-grid;
+    place-items: center;
+    width: 2.1rem;
+    height: 2.1rem;
+    color: var(--text-muted);
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .nav__icon:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .nav__moon {
+    display: none;
+  }
+
+  :global(:root[data-theme='light']) .nav__moon {
+    display: block;
+  }
+
+  :global(:root[data-theme='light']) .nav__sun {
+    display: none;
+  }
+
+  @media (max-width: 900px) {
+    .nav__links {
+      display: none;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .nav__brand-text {
+      display: none;
+    }
+  }
+</style>

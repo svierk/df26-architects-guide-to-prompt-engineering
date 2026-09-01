@@ -1,0 +1,55 @@
+---
+// Included once per page. Every copy button on the page is a
+// `<button data-copy="<css-selector>">` - the delegated listener below copies
+// the text content of the referenced element and confirms it in the button.
+---
+
+<script>
+  async function copyText(text: string): Promise<boolean> {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      // Fallback for browsers that deny the async clipboard API outside a
+      // secure context (e.g. previewing the build over plain http).
+      const area = document.createElement('textarea');
+      area.value = text;
+      area.setAttribute('readonly', '');
+      area.style.position = 'fixed';
+      area.style.opacity = '0';
+      document.body.appendChild(area);
+      area.select();
+      const ok = document.execCommand('copy');
+      area.remove();
+      return ok;
+    }
+  }
+
+  document.addEventListener('click', async (event) => {
+    const target = event.target as HTMLElement | null;
+    const button = target?.closest<HTMLButtonElement>('[data-copy]');
+    if (!button) return;
+
+    const source = document.querySelector(button.dataset.copy ?? '');
+    if (!source) return;
+
+    const label = button.querySelector('[data-copy-label]') ?? button;
+    const original = label.textContent ?? 'Copy';
+    const copied = await copyText((source as HTMLElement).innerText.trim());
+
+    label.textContent = copied ? 'Copied' : 'Press ⌘C';
+    button.classList.add('is-copied');
+
+    window.setTimeout(() => {
+      label.textContent = original;
+      button.classList.remove('is-copied');
+    }, 1800);
+  });
+</script>
+
+<style is:global>
+  [data-copy].is-copied {
+    color: var(--ok);
+    border-color: var(--ok);
+  }
+</style>

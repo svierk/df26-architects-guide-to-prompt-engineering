@@ -1,0 +1,332 @@
+---
+import { demos } from '../data/demos';
+import PromptBlock from './PromptBlock.astro';
+
+const sections = [
+  { key: 'context', label: 'CONTEXT' },
+  { key: 'constraints', label: 'CONSTRAINTS' },
+  { key: 'tools', label: 'TOOLS' },
+  { key: 'output', label: 'OUTPUT' }
+] as const;
+---
+
+<section class="section" id="demos">
+  <div class="container">
+    <p class="section-eyebrow">Worked examples</p>
+    <h2 class="section-title">The same question, twice</h2>
+    <p class="section-subtitle">
+      Three real architecture tasks, each asked the way most teams would ask it — and then packaged with the four
+      control moves. The right-hand column is what produced the artifact underneath it.
+    </p>
+
+    <div class="tabs" role="tablist" aria-label="Worked examples">
+      {
+        demos.map((demo, index) => (
+          <button
+            class:list={['tabs__tab', { 'is-active': index === 0 }]}
+            role="tab"
+            type="button"
+            id={`tab-${demo.id}`}
+            data-tab={demo.id}
+            aria-controls={`panel-${demo.id}`}
+            aria-selected={index === 0 ? 'true' : 'false'}
+          >
+            <span class="tabs__index">{`0${index + 1}`}</span>
+            {demo.label}
+          </button>
+        ))
+      }
+    </div>
+
+    {
+      demos.map((demo, index) => (
+        <div
+          class="panel"
+          role="tabpanel"
+          id={`panel-${demo.id}`}
+          data-panel={demo.id}
+          aria-labelledby={`tab-${demo.id}`}
+          hidden={index !== 0}
+        >
+          <header class="panel__head">
+            <div>
+              <h3 class="panel__title">{demo.title}</h3>
+              <p class="panel__scenario">{demo.scenario}</p>
+            </div>
+            <div class="panel__rules">
+              {demo.rules.map((rule) => (
+                <a class="chip" href={`#rule-${rule}`}>
+                  Rule {rule}
+                </a>
+              ))}
+            </div>
+          </header>
+
+          <div class="compare">
+            <article class="compare__col compare__col--before">
+              <div class="compare__head">
+                <span class="compare__label compare__label--before">Unstructured prompt</span>
+              </div>
+              <pre class="code compare__code">{demo.unstructured}</pre>
+            </article>
+
+            <article class="compare__col">
+              <div class="compare__head">
+                <span class="compare__label">Structured protocol</span>
+                <button class="btn btn--small" type="button" data-copy={`#protocol-${demo.id}`}>
+                  <span data-copy-label>Copy</span>
+                </button>
+                <button class="btn btn--small" type="button" data-preset={demo.id}>
+                  Load in builder
+                </button>
+              </div>
+              <PromptBlock
+                class="compare__code"
+                id={`protocol-${demo.id}`}
+                entries={sections.map((section) => ({ label: section.label, text: demo.protocol[section.key] }))}
+              />
+            </article>
+          </div>
+
+          <div class="result">
+            <div class="result__head">
+              <span class="result__file">{demo.result.file}</span>
+              <span class="result__tag">What the structured prompt returns</span>
+            </div>
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    {demo.result.columns.map((column) => (
+                      <th>{column}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {demo.result.rows.map((row) => (
+                    <tr>
+                      {row.map((cell) => (
+                        <td>{cell}</td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p class="result__note">{demo.result.note}</p>
+          </div>
+        </div>
+      ))
+    }
+  </div>
+</section>
+
+<script>
+  const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-tab]'));
+  const panels = Array.from(document.querySelectorAll<HTMLElement>('[data-panel]'));
+
+  function activate(id: string): void {
+    tabs.forEach((tab) => {
+      const active = tab.dataset.tab === id;
+      tab.classList.toggle('is-active', active);
+      tab.setAttribute('aria-selected', String(active));
+    });
+    panels.forEach((panel) => {
+      panel.hidden = panel.dataset.panel !== id;
+    });
+  }
+
+  tabs.forEach((tab, index) => {
+    tab.addEventListener('click', () => activate(tab.dataset.tab ?? ''));
+
+    // Left/right arrows move between tabs, as expected of a tablist.
+    tab.addEventListener('keydown', (event) => {
+      if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
+      event.preventDefault();
+      const offset = event.key === 'ArrowRight' ? 1 : -1;
+      const next = tabs[(index + offset + tabs.length) % tabs.length];
+      next.focus();
+      activate(next.dataset.tab ?? '');
+    });
+  });
+
+  // Dispatched by the field guide, so a rule can send the reader to the
+  // example it was derived from.
+  document.addEventListener('demos:activate', (event) => {
+    const id = (event as CustomEvent<string>).detail;
+    if (!panels.some((panel) => panel.dataset.panel === id)) return;
+    activate(id);
+    document.getElementById(`panel-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+
+  // Hands the demo protocol to the builder above, which fills its four fields
+  // and scrolls itself into view.
+  document.querySelectorAll<HTMLButtonElement>('[data-preset]').forEach((button) => {
+    button.addEventListener('click', () => {
+      document.dispatchEvent(new CustomEvent('builder:preset', { detail: button.dataset.preset }));
+    });
+  });
+</script>
+
+<style>
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .tabs__tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.45rem 1rem;
+    cursor: pointer;
+    transition:
+      color 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .tabs__tab:hover {
+    color: var(--text);
+    border-color: var(--border-strong);
+  }
+
+  .tabs__tab.is-active {
+    color: var(--text);
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+
+  .tabs__index {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--accent-2);
+  }
+
+  .panel__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .panel__title {
+    font-size: 1.3rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .panel__scenario {
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    margin: 0;
+  }
+
+  .panel__rules {
+    display: flex;
+    gap: 0.4rem;
+  }
+
+  .panel__rules .chip:hover {
+    text-decoration: none;
+    border-color: var(--accent);
+  }
+
+  .compare {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    gap: 1.25rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .compare__col {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border-strong);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+
+  .compare__col--before {
+    opacity: 0.9;
+  }
+
+  .compare__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 0.9rem;
+    background: var(--bg-raised);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .compare__label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent-2);
+    margin-right: auto;
+  }
+
+  .compare__label--before {
+    color: var(--warn);
+  }
+
+  .compare__code {
+    flex: 1;
+    border: none;
+    border-radius: 0;
+    padding: 1.1rem 1.2rem;
+  }
+
+  .result {
+    margin-bottom: 1rem;
+  }
+
+  .result__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin-bottom: 0.7rem;
+  }
+
+  .result__file {
+    font-family: var(--font-mono);
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .result__tag {
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+
+  .result__note {
+    font-size: 0.88rem;
+    font-style: italic;
+    color: var(--text-muted);
+    margin: 0.85rem 0 0;
+  }
+
+  @media (max-width: 980px) {
+    .compare {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

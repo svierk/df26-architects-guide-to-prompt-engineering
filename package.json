@@ -1,0 +1,35 @@
+{
+  "name": "df26-architects-guide-to-prompt-engineering",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Session asset for \"An Architect's Guide to Prompt Engineering\" at Dreamforce '26.",
+  "author": {
+    "name": "Sebastiano Schwarz",
+    "url": "https://github.com/svierk"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": "24.x.x",
+    "npm": "11.x.x"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "qr:generate": "node scripts/generate-qr.mjs",
+    "og:generate": "node scripts/generate-og.mjs",
+    "prettier": "prettier --write \"**/*.{astro,css,js,mjs,json,md,ts,yml,yaml}\"",
+    "prettier:verify": "prettier --list-different \"**/*.{astro,css,js,mjs,json,md,ts,yml,yaml}\""
+  },
+  "dependencies": {
+    "astro": "^7.2.10"
+  },
+  "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
+    "prettier": "^3.8.3",
+    "prettier-plugin-astro": "^0.14.1",
+    "qrcode": "^1.5.4"
+  }
+}

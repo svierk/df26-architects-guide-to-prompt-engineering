@@ -1,0 +1,79 @@
+---
+import { controlMoves } from '../data/controls';
+import PromptBlock from './PromptBlock.astro';
+
+/** Label as it appears in the copied prompt - padded so the block stays aligned. */
+const label = (key: string) => (key === 'OUTPUT' ? 'OUTPUT + VALIDATION' : key);
+
+const entries = controlMoves.map((move) => ({ label: label(move.key), text: move.protocol }));
+---
+
+<section class="section" id="protocol">
+  <div class="container">
+    <p class="section-eyebrow">The take-home artifact</p>
+    <h2 class="section-title">One protocol for every prompt</h2>
+    <p class="section-subtitle">
+      Package all four control moves into one prompt with this skeleton. Copy it, then replace each line with the
+      specifics of your org — the builder below does exactly that, with the three worked examples as presets.
+    </p>
+
+    <div class="protocol">
+      <div class="protocol__bar">
+        <span class="protocol__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="protocol__file">prompt-protocol.txt</span>
+        <button class="btn btn--small" type="button" data-copy="#protocol-skeleton">
+          <span data-copy-label>Copy</span>
+        </button>
+      </div>
+
+      <PromptBlock class="protocol__code" id="protocol-skeleton" entries={entries} />
+    </div>
+  </div>
+</section>
+
+<style>
+  .protocol {
+    border: 1px solid var(--border-strong);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+
+  .protocol__bar {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.6rem 0.9rem;
+    background: var(--bg-raised);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .protocol__dots {
+    display: flex;
+    gap: 0.35rem;
+  }
+
+  .protocol__dots i {
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 50%;
+    background: var(--border-strong);
+  }
+
+  .protocol__dots i:first-child {
+    background: var(--accent);
+  }
+
+  .protocol__file {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-right: auto;
+  }
+
+  .protocol__code {
+    border: none;
+    border-radius: 0;
+    padding: 1.4rem 1.5rem;
+  }
+</style>

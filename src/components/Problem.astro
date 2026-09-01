@@ -1,0 +1,135 @@
+---
+import { architectQuestions, causes, symptoms } from '../data/problem';
+---
+
+<section class="section" id="problem">
+  <div class="container">
+    <p class="section-eyebrow">The symptom</p>
+    <h2 class="section-title">When AI disappoints, we blame the tool</h2>
+    <p class="section-subtitle">
+      The quality of AI-generated output is determined less by the wording of a prompt and more by the control
+      mechanisms around it.
+    </p>
+
+    <ul class="symptoms">
+      {symptoms.map((symptom) => <li class="symptoms__item">“{symptom}”</li>)}
+    </ul>
+
+    <div class="questions">
+      <h3 class="questions__title">Architects ask a different question</h3>
+      <ul class="questions__list">
+        {architectQuestions.map((question) => <li>{question}</li>)}
+      </ul>
+    </div>
+
+    <h3 class="causes__heading">A Salesforce org is a running system — not a metadata dump</h3>
+    <div class="grid grid-3">
+      {
+        causes.map((cause) => (
+          <article class="card card--hover cause">
+            <h4 class="cause__title">{cause.title}</h4>
+            <p class="cause__lead">{cause.lead}</p>
+            <p class="cause__detail">{cause.detail}</p>
+            <p class="cause__consequence">{cause.consequence}</p>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .symptoms {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.9rem;
+    list-style: none;
+    margin: 0 0 2rem;
+    padding: 0;
+  }
+
+  .symptoms__item {
+    background: var(--bg-raised);
+    border: 1px dashed var(--border-strong);
+    border-radius: 12px;
+    padding: 0.9rem 1rem;
+    font-style: italic;
+    font-size: 0.92rem;
+    color: var(--text-muted);
+  }
+
+  .questions {
+    background: var(--bg-code);
+    border: 1px solid var(--border-strong);
+    border-radius: 14px;
+    padding: 1.4rem 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .questions__title {
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent-2);
+    margin-bottom: 0.9rem;
+  }
+
+  .questions__list {
+    display: grid;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-family: var(--font-mono);
+    font-size: 0.86rem;
+    color: #dbe6f6;
+  }
+
+  .questions__list li::before {
+    content: '→ ';
+    color: var(--accent);
+  }
+
+  .causes__heading {
+    font-size: 1.15rem;
+    margin-bottom: 1.1rem;
+  }
+
+  .cause__title {
+    font-size: 1.05rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .cause__lead {
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .cause__detail,
+  .cause__consequence {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 0.6rem;
+  }
+
+  .cause__consequence {
+    margin: 0.9rem 0 0;
+    padding-top: 0.8rem;
+    border-top: 1px solid var(--border);
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  @media (max-width: 900px) {
+    .symptoms {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 520px) {
+    .symptoms {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
