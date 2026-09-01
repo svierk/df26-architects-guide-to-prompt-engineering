@@ -14,7 +14,7 @@ export const session = {
   /** Shown in the hero and used as the meta description of the page. */
   premise: 'Most teams think prompting is about wording. It isn’t - it’s about the controls.',
   summary:
-    'The four control moves, one reusable protocol, six rules and three worked Salesforce examples - the complete session in a single page.',
+    'The four control moves, the protocol that packages them, six rules and three worked Salesforce examples - the complete session in a single page.',
   /** The learning objectives the session was accepted with. */
   objectives: [
     'Design prompts using context, constraints, tools and structured outputs.',
