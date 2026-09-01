@@ -1,15 +1,16 @@
-// Regenerates public/qr.svg - the QR code shown on the page and printed on the
-// closing slide of the deck. Run `npm run qr:generate` after the published URL
-// of the site changes.
+// Generates a QR code for the published page URL into `qr-code.svg` at the
+// repository root. The output is local only - it is git-ignored and is not part
+// of the published site, so nothing on the page depends on it.
+//
+// Usage: npm run qr:generate   (override the target with QR_URL=... )
 import { writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import QRCode from 'qrcode';
 
 const url = process.env.QR_URL ?? 'https://svierk.github.io/df26-architects-guide-to-prompt-engineering/';
-const target = fileURLToPath(new URL('../public/qr.svg', import.meta.url));
+const target = fileURLToPath(new URL('../qr-code.svg', import.meta.url));
 
-// High error correction keeps the code scannable from the back of the room,
-// even at slide size and through a phone camera at an angle.
+// High error correction keeps the code readable when it is resized or printed.
 const svg = await QRCode.toString(url, {
   type: 'svg',
   errorCorrectionLevel: 'H',
@@ -18,4 +19,4 @@ const svg = await QRCode.toString(url, {
 });
 
 await writeFile(target, svg, 'utf8');
-console.log(`Wrote ${target}\n  → ${url}`);
+console.log(`Wrote ${target}\n  -> ${url}`);

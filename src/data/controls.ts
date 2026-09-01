@@ -21,13 +21,13 @@ export const controlMoves: ControlMove[] = [
     title: 'Context',
     summary: "What the model needs to know about the org, the org's metadata and the task.",
     protocol:
-      'Here is the org-specific evidence — metadata, code, business rules, prior decisions — attached or pasted, not assumed.'
+      'Here is the org-specific evidence - metadata, code, business rules, prior decisions - attached or pasted, not assumed.'
   },
   {
     number: '02',
     key: 'CONSTRAINTS',
     title: 'Constraints',
-    summary: 'What the model must not do — and what to do instead, so guardrails redirect rather than just block.',
+    summary: 'What the model must not do - and what to do instead, so guardrails redirect rather than just block.',
     protocol:
       'Only use what is provided; flag anything inferred. Pair every guardrail with the fallback action, not just the prohibition.'
   },
@@ -35,9 +35,9 @@ export const controlMoves: ControlMove[] = [
     number: '03',
     key: 'TOOLS',
     title: 'Tools',
-    summary: 'What the model can call — describe calls, search, code execution, connected systems.',
+    summary: 'What the model can call - describe calls, search, code execution, connected systems.',
     protocol:
-      'Name exactly what the model may call to verify itself — describe calls, code search, sandbox execution — before it answers.'
+      'Name exactly what the model may call to verify itself - describe calls, code search, sandbox execution - before it answers.'
   },
   {
     number: '04',
@@ -45,6 +45,6 @@ export const controlMoves: ControlMove[] = [
     title: 'Output + Evaluation',
     summary: 'The exact shape of the response, plus the self-check it must pass before it ships.',
     protocol:
-      'Define the exact artifact shape and the self-check it must pass first — table, diagram, schema — designed so it can be validated, diffed and reused.'
+      'Define the exact artifact shape and the self-check it must pass first - table, diagram, schema - designed so it can be validated, diffed and reused.'
   }
 ];
