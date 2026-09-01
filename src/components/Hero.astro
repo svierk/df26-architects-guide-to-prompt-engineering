@@ -6,13 +6,6 @@ const eventDate = new Date(session.date).toLocaleDateString('en-US', {
   year: 'numeric',
   timeZone: 'UTC'
 });
-
-const facts = [
-  { value: '4', label: 'control moves' },
-  { value: '1', label: 'reusable protocol' },
-  { value: '6', label: 'rules' },
-  { value: '3', label: 'worked examples' }
-];
 ---
 
 <section class="hero" id="top">
@@ -33,17 +26,6 @@ const facts = [
         <a class="btn btn--primary" href="#builder">Build a prompt</a>
         <a class="btn" href="#protocol">Copy the protocol</a>
       </div>
-
-      <ul class="hero__facts">
-        {
-          facts.map((fact) => (
-            <li>
-              <strong>{fact.value}</strong>
-              <span>{fact.label}</span>
-            </li>
-          ))
-        }
-      </ul>
     </div>
 
     <aside class="card hero__card">
@@ -106,36 +88,7 @@ const facts = [
     display: flex;
     flex-wrap: wrap;
     gap: 0.7rem;
-    margin: 1.5rem 0 2rem;
-  }
-
-  .hero__facts {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.75rem;
-    list-style: none;
-    margin: 0;
-    padding: 1.25rem 0 0;
-    border-top: 1px solid var(--border);
-  }
-
-  .hero__facts li {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .hero__facts strong {
-    font-size: 1.55rem;
-    line-height: 1.1;
-    background: linear-gradient(120deg, var(--accent), var(--accent-2));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-
-  .hero__facts span {
-    font-size: 0.8rem;
-    color: var(--text-muted);
+    margin: 1.5rem 0 0;
   }
 
   .hero__card {
