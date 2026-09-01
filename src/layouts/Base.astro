@@ -1,0 +1,50 @@
+---
+import { session } from '../data/session';
+import { withBase } from '../lib/paths';
+import '../styles/global.css';
+
+const title = `${session.title} — ${session.event}`;
+const description = `${session.premise} ${session.summary}`;
+const canonical = new URL(import.meta.env.BASE_URL + '/', Astro.site).href.replace(/\/{2,}$/, '/');
+const ogImage = new URL(withBase('og-image.png'), Astro.site).href;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href={withBase('favicon.svg')} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="generator" content={Astro.generator} />
+    <!--
+      Applied before first paint so the page never flashes the wrong theme:
+      an explicit choice wins, otherwise the OS preference decides.
+    -->
+    <script is:inline>
+      (function () {
+        var stored = localStorage.getItem('theme');
+        var theme =
+          stored === 'light' || stored === 'dark'
+            ? stored
+            : window.matchMedia('(prefers-color-scheme: light)').matches
+              ? 'light'
+              : 'dark';
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

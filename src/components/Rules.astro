@@ -1,0 +1,122 @@
+---
+import { demos } from '../data/demos';
+import { rules } from '../data/rules';
+
+const demoTitle = (id: string) => demos.find((demo) => demo.id === id)?.title ?? '';
+---
+
+<section class="section" id="rules">
+  <div class="container">
+    <p class="section-eyebrow">The field guide</p>
+    <h2 class="section-title">Six rules, straight from the examples</h2>
+    <p class="section-subtitle">
+      Each rule came out of one of the three demos above. Together they are the checklist behind the readiness check in
+      the builder.
+    </p>
+
+    <div class="grid grid-3 rules">
+      {
+        rules.map((rule) => (
+          <article class="card card--hover rule" id={`rule-${rule.number}`}>
+            <span class="rule__number">{rule.number}</span>
+            <h3 class="rule__title">{rule.title}</h3>
+            <p class="rule__short">{rule.short}</p>
+            <p class="rule__why">{rule.why}</p>
+            <div class="rule__demo">
+              <button class="rule__demo-link" type="button" data-demo={rule.demoId}>
+                From “{demoTitle(rule.demoId)}”
+              </button>
+              <p class="rule__demo-text">{rule.fromDemo}</p>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<script>
+  // Sends the reader back to the worked example a rule was derived from,
+  // switching the demo tab on the way.
+  document.querySelectorAll<HTMLButtonElement>('[data-demo]').forEach((button) => {
+    button.addEventListener('click', () => {
+      document.dispatchEvent(new CustomEvent('demos:activate', { detail: button.dataset.demo }));
+    });
+  });
+</script>
+
+<style>
+  .rule {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .rule__number {
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+    background: linear-gradient(120deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 0.55rem;
+  }
+
+  .rule__title {
+    font-size: 1.05rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .rule__short {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.6rem;
+  }
+
+  .rule__why {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+  }
+
+  .rule__demo {
+    margin-top: auto;
+    padding-top: 0.9rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .rule__demo-link {
+    display: block;
+    text-align: left;
+    font: inherit;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent-2);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  .rule__demo-link:hover {
+    text-decoration: underline;
+  }
+
+  .rule__demo-text {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    line-height: 1.55;
+    color: var(--text-muted);
+    margin: 0.45rem 0 0;
+  }
+
+  /* Highlights the card a check or a demo chip just linked to. */
+  .rule:target {
+    border-color: var(--accent);
+    box-shadow: 0 6px 30px var(--accent-glow);
+  }
+</style>

@@ -1,0 +1,76 @@
+---
+import { controlMoves } from '../data/controls';
+---
+
+<section class="section" id="controls">
+  <div class="container">
+    <p class="section-eyebrow">The pattern</p>
+    <h2 class="section-title">Every prompt needs four control moves</h2>
+    <p class="section-subtitle">
+      Swapping vague for specific: in what the model knows, what it can’t do, what it can call, and what it must return.
+      Together they turn a single prompt into a system — that is what “prompting as system design” means.
+    </p>
+
+    <div class="grid grid-2">
+      {
+        controlMoves.map((move) => (
+          <article class="card card--hover move">
+            <div class="move__head">
+              <span class="move__number">{move.number}</span>
+              <h3 class="move__title">{move.title}</h3>
+            </div>
+            <p class="move__summary">{move.summary}</p>
+            <p class="move__key">
+              <code>{move.key}:</code>
+            </p>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .move {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .move__head {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .move__number {
+    font-family: var(--font-mono);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--accent-2);
+  }
+
+  .move__title {
+    font-size: 1.1rem;
+    margin: 0;
+  }
+
+  .move__summary {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin-bottom: 0.9rem;
+  }
+
+  .move__key {
+    margin: 0;
+  }
+
+  .move__key code {
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border-radius: 6px;
+    padding: 0.15rem 0.45rem;
+  }
+</style>

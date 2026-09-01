@@ -1,0 +1,58 @@
+---
+import { session, speakers } from '../data/session';
+---
+
+<footer class="footer">
+  <div class="container footer__inner">
+    <div>
+      <p class="footer__title">{session.title}</p>
+      <p class="footer__meta">
+        {session.event} · {session.location} · <a href={session.repo} target="_blank" rel="noopener">Source on GitHub</a
+        > · MIT licensed
+      </p>
+    </div>
+
+    <p class="footer__authors">
+      Questions? Reach out to{' '}
+      {
+        speakers.map((speaker, index) => (
+          <>
+            <a href={speaker.linkedin} target="_blank" rel="noopener">
+              {speaker.name}
+            </a>
+            {index < speakers.length - 1 ? ' and ' : ''}
+          </>
+        ))
+      }.
+    </p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    margin-top: 4rem;
+    padding: 2rem 0 3rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .footer__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .footer__title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin: 0 0 0.25rem;
+  }
+
+  .footer__meta,
+  .footer__authors {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin: 0;
+  }
+</style>

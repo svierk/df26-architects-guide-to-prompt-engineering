@@ -1,0 +1,117 @@
+---
+import { session } from '../data/session';
+import { withBase } from '../lib/paths';
+
+const pageUrl = new URL(import.meta.env.BASE_URL + '/', Astro.site).href.replace(/\/{2,}$/, '/');
+---
+
+<section class="section closing">
+  <div class="container">
+    <blockquote class="quote">
+      <p>In the AI era, everyone will have access to the same models.</p>
+      <p>The differentiator is no longer the model.</p>
+      <p class="quote__punch">It’s the architecture around it.</p>
+    </blockquote>
+
+    <div class="share card">
+      <img class="share__qr" src={withBase('qr.svg')} width="128" height="128" alt={`QR code linking to ${pageUrl}`} />
+      <div class="share__body">
+        <h2 class="share__title">Take it with you</h2>
+        <p class="share__text">
+          This page is the session handout — the protocol, the six rules and the three worked examples, all
+          copy-and-paste ready. Share it with the architect who couldn’t make the room.
+        </p>
+        <div class="share__actions">
+          <span class="share__url" id="page-url">{pageUrl}</span>
+          <button class="btn btn--small" type="button" data-copy="#page-url">
+            <span data-copy-label>Copy link</span>
+          </button>
+          <a class="btn btn--small" href={session.repo} target="_blank" rel="noopener">View on GitHub</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .closing {
+    padding-top: 4rem;
+  }
+
+  .quote {
+    margin: 0 0 2.5rem;
+    padding: 0;
+    text-align: center;
+    font-size: clamp(1.25rem, 3vw, 1.85rem);
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+  }
+
+  .quote p {
+    margin: 0 0 0.35rem;
+    color: var(--text-muted);
+  }
+
+  .quote__punch {
+    color: var(--text);
+    background: linear-gradient(120deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .share {
+    display: flex;
+    align-items: center;
+    gap: 1.6rem;
+    background: linear-gradient(160deg, var(--bg-card), color-mix(in srgb, var(--accent) 7%, var(--bg-card)));
+    padding: 1.5rem 1.6rem;
+  }
+
+  .share__qr {
+    flex: none;
+    width: 128px;
+    height: 128px;
+    border-radius: 10px;
+    background: #fff;
+    padding: 0.5rem;
+  }
+
+  .share__title {
+    font-size: 1.15rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .share__text {
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    margin-bottom: 1rem;
+    max-width: 42rem;
+  }
+
+  .share__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .share__url {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.35rem 0.6rem;
+    overflow-wrap: anywhere;
+  }
+
+  @media (max-width: 720px) {
+    .share {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>

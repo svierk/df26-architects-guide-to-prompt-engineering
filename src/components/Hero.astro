@@ -1,0 +1,181 @@
+---
+import { session } from '../data/session';
+
+const eventDate = new Date(session.date).toLocaleDateString('en-US', {
+  month: 'long',
+  year: 'numeric',
+  timeZone: 'UTC'
+});
+
+const facts = [
+  { value: '4', label: 'control moves' },
+  { value: '1', label: 'reusable protocol' },
+  { value: '6', label: 'rules' },
+  { value: '3', label: 'worked examples' }
+];
+---
+
+<section class="hero" id="top">
+  <div class="container hero__inner">
+    <div>
+      <p class="hero__eyebrow">
+        {session.event} · {session.location} · {eventDate}
+      </p>
+      <h1 class="hero__title">{session.title}</h1>
+
+      <p class="hero__premise">
+        Most teams think prompting is about wording. <em>It isn’t.</em> It’s about the controls.
+      </p>
+
+      <p class="hero__summary">{session.summary}</p>
+
+      <div class="hero__actions">
+        <a class="btn btn--primary" href="#builder">Build a prompt</a>
+        <a class="btn" href="#protocol">Copy the protocol</a>
+      </div>
+
+      <ul class="hero__facts">
+        {
+          facts.map((fact) => (
+            <li>
+              <strong>{fact.value}</strong>
+              <span>{fact.label}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <aside class="card hero__card">
+      <h2 class="hero__card-title">What you can do after this page</h2>
+      <ol class="hero__objectives">
+        {session.objectives.map((objective) => <li>{objective}</li>)}
+      </ol>
+      <p class="hero__card-note">
+        Everything below is copy-and-paste ready — nothing here needs the slides to make sense.
+      </p>
+    </aside>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding: clamp(3rem, 8vw, 5.5rem) 0 1.5rem;
+  }
+
+  .hero__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+    gap: 2.5rem;
+    align-items: start;
+  }
+
+  .hero__eyebrow {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent-2);
+    margin-bottom: 0.9rem;
+  }
+
+  .hero__title {
+    font-size: clamp(2.1rem, 5.5vw, 3.4rem);
+    margin-bottom: 1.1rem;
+    background: linear-gradient(120deg, var(--text) 30%, var(--accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .hero__premise {
+    font-size: clamp(1.1rem, 2.2vw, 1.35rem);
+    font-weight: 600;
+    line-height: 1.45;
+    margin-bottom: 0.9rem;
+  }
+
+  .hero__premise em {
+    color: var(--accent);
+  }
+
+  .hero__summary {
+    color: var(--text-muted);
+    max-width: 34rem;
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    margin: 1.5rem 0 2rem;
+  }
+
+  .hero__facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.75rem;
+    list-style: none;
+    margin: 0;
+    padding: 1.25rem 0 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .hero__facts li {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hero__facts strong {
+    font-size: 1.55rem;
+    line-height: 1.1;
+    background: linear-gradient(120deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .hero__facts span {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  .hero__card {
+    background: linear-gradient(160deg, var(--bg-card), color-mix(in srgb, var(--accent) 6%, var(--bg-card)));
+  }
+
+  .hero__card-title {
+    font-size: 1rem;
+    letter-spacing: 0.01em;
+  }
+
+  .hero__objectives {
+    margin: 0 0 1rem;
+    padding-left: 1.1rem;
+    font-size: 0.92rem;
+    color: var(--text-muted);
+  }
+
+  .hero__objectives li {
+    margin-bottom: 0.55rem;
+  }
+
+  .hero__objectives li::marker {
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .hero__card-note {
+    margin: 0;
+    padding-top: 0.9rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.85rem;
+    color: var(--text-faint);
+  }
+
+  @media (max-width: 900px) {
+    .hero__inner {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
