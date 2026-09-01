@@ -20,8 +20,6 @@ const eventDate = new Date(session.date).toLocaleDateString('en-US', {
         Most teams think prompting is about wording. <em>It isn’t.</em> It’s about the controls.
       </p>
 
-      <p class="hero__summary">{session.summary}</p>
-
       <div class="hero__actions">
         <a class="btn btn--primary" href="#builder">Build a prompt</a>
         <a class="btn" href="#protocol">Copy the protocol</a>
@@ -77,11 +75,6 @@ const eventDate = new Date(session.date).toLocaleDateString('en-US', {
 
   .hero__premise em {
     color: var(--accent);
-  }
-
-  .hero__summary {
-    color: var(--text-muted);
-    max-width: 34rem;
   }
 
   .hero__actions {

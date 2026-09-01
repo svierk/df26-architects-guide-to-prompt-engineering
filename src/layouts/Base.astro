@@ -4,7 +4,7 @@ import { withBase } from '../lib/paths';
 import '../styles/global.css';
 
 const title = `${session.title} - ${session.event}`;
-const description = `${session.premise} ${session.summary}`;
+const description = `${session.premise} ${session.description}`;
 const canonical = new URL(import.meta.env.BASE_URL + '/', Astro.site).href.replace(/\/{2,}$/, '/');
 const ogImage = new URL(withBase('og-image.png'), Astro.site).href;
 ---
