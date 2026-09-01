@@ -18,6 +18,7 @@ const links = [
     <a class="nav__brand" href="#top">
       <span class="nav__mark" aria-hidden="true"></span>
       <span class="nav__brand-text">Architects’ Guide to Prompting</span>
+      <span class="nav__brand-short">Prompting Guide</span>
     </a>
 
     <ul class="nav__links">
@@ -70,9 +71,59 @@ const links = [
           <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"></path>
         </svg>
       </button>
+
+      <button
+        class="nav__icon nav__burger"
+        id="nav-toggle"
+        type="button"
+        aria-label="Open menu"
+        aria-expanded="false"
+        aria-controls="mobile-nav"
+        data-label-open="Open menu"
+        data-label-close="Close menu"
+      >
+        <svg
+          class="nav__menu-icon"
+          viewBox="0 0 24 24"
+          width="20"
+          height="20"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <path d="M3 6h18M3 12h18M3 18h18"></path>
+        </svg>
+        <svg
+          class="nav__close-icon"
+          viewBox="0 0 24 24"
+          width="20"
+          height="20"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <path d="M6 6l12 12M18 6 6 18"></path>
+        </svg>
+      </button>
     </div>
   </nav>
 </header>
+
+<div class="mobile-nav" id="mobile-nav">
+  <ul>
+    {
+      links.map((link) => (
+        <li>
+          <a href={link.href}>{link.label}</a>
+        </li>
+      ))
+    }
+  </ul>
+</div>
 
 <script>
   // Theme choice is persisted so it survives a reload and any later visit.
@@ -82,6 +133,38 @@ const links = [
     const next = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
     document.documentElement.dataset.theme = next;
     localStorage.setItem('theme', next);
+  });
+
+  const navToggle = document.getElementById('nav-toggle');
+  const mobileNav = document.getElementById('mobile-nav');
+
+  const setMobileNav = (open: boolean) => {
+    navToggle?.setAttribute('aria-expanded', String(open));
+    navToggle?.setAttribute(
+      'aria-label',
+      (open ? navToggle.dataset.labelClose : navToggle.dataset.labelOpen) ?? 'Open menu'
+    );
+    mobileNav?.classList.toggle('open', open);
+    // Locks the page behind the overlay so only the menu scrolls.
+    document.body.classList.toggle('nav-locked', open);
+  };
+
+  navToggle?.addEventListener('click', () => {
+    setMobileNav(navToggle.getAttribute('aria-expanded') !== 'true');
+  });
+
+  mobileNav?.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', () => setMobileNav(false));
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') setMobileNav(false);
+  });
+
+  // The overlay only exists below the breakpoint: closing it on the way up
+  // keeps the scroll lock from surviving a rotation or a window resize.
+  window.matchMedia('(max-width: 900px)').addEventListener('change', (event) => {
+    if (!event.matches) setMobileNav(false);
   });
 </script>
 
@@ -185,6 +268,26 @@ const links = [
     display: none;
   }
 
+  .nav__burger {
+    display: none;
+  }
+
+  .nav__close-icon {
+    display: none;
+  }
+
+  .nav__burger[aria-expanded='true'] .nav__menu-icon {
+    display: none;
+  }
+
+  .nav__burger[aria-expanded='true'] .nav__close-icon {
+    display: block;
+  }
+
+  .mobile-nav {
+    display: none;
+  }
+
   :global(:root[data-theme='light']) .nav__moon {
     display: block;
   }
@@ -197,11 +300,78 @@ const links = [
     .nav__links {
       display: none;
     }
+
+    .nav__burger {
+      display: inline-grid;
+    }
+
+    .mobile-nav {
+      display: block;
+      position: fixed;
+      /* Sits directly under the sticky header. */
+      top: 3.75rem;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 40;
+      background: var(--bg);
+      overflow-y: auto;
+      transform: translateY(-8px);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition:
+        opacity 0.2s ease,
+        transform 0.2s ease,
+        visibility 0.2s;
+    }
+
+    .mobile-nav.open {
+      transform: translateY(0);
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .mobile-nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .mobile-nav a {
+      display: block;
+      padding: 0.85rem 0.25rem;
+      font-size: 1.05rem;
+      font-weight: 500;
+      color: var(--text);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .mobile-nav a:hover {
+      color: var(--accent);
+      text-decoration: none;
+    }
   }
 
-  @media (max-width: 420px) {
+  :global(body.nav-locked) {
+    overflow: hidden;
+  }
+
+  .nav__brand-short {
+    display: none;
+  }
+
+  @media (max-width: 460px) {
     .nav__brand-text {
       display: none;
+    }
+
+    .nav__brand-short {
+      display: inline;
     }
   }
 </style>
