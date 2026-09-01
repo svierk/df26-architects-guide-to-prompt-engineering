@@ -20,9 +20,6 @@ import { controlMoves } from '../data/controls';
               <h3 class="move__title">{move.title}</h3>
             </div>
             <p class="move__summary">{move.summary}</p>
-            <p class="move__key">
-              <code>{move.key}:</code>
-            </p>
           </article>
         ))
       }
@@ -31,11 +28,6 @@ import { controlMoves } from '../data/controls';
 </section>
 
 <style>
-  .move {
-    position: relative;
-    overflow: hidden;
-  }
-
   .move__head {
     display: flex;
     align-items: baseline;
@@ -58,19 +50,6 @@ import { controlMoves } from '../data/controls';
   .move__summary {
     color: var(--text-muted);
     font-size: 0.95rem;
-    margin-bottom: 0.9rem;
-  }
-
-  .move__key {
     margin: 0;
-  }
-
-  .move__key code {
-    font-size: 0.78rem;
-    letter-spacing: 0.06em;
-    color: var(--accent);
-    background: var(--accent-soft);
-    border-radius: 6px;
-    padding: 0.15rem 0.45rem;
   }
 </style>
