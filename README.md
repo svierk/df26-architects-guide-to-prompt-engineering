@@ -10,7 +10,7 @@
 
 ## What this is
 
-The complete session on a single page, written to stand on its own for anyone who arrives at the link without any other context:
+The session content on a single page, written to stand on its own for anyone who arrives at the link without any other context:
 
 | Section                | What you get                                                                                                                                              |
 | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -20,6 +20,7 @@ The complete session on a single page, written to stand on its own for anyone wh
 | **Prompt builder**     | Fill the four control moves, watch the prompt assemble, and get scored against the six rules - live, in your browser                                      |
 | **Three demos**        | Org merger, order-sync cutover and FSC metadata governance - each shown as an unstructured prompt vs. a structured protocol, with the artifact it returns |
 | **Six rules**          | The field guide, each rule traced back to the example it came from                                                                                        |
+| **Take it with you**   | The page URL to copy or share on LinkedIn                                                                                                                 |
 
 The prompt builder keeps your draft in `localStorage` - nothing is sent anywhere, and there is no analytics or tracking on the page.
 
@@ -35,10 +36,13 @@ Apply prompt engineering techniques that incorporate context, constraints, tools
 
 ```bash
 npm install      # install dependencies
-npm run dev      # start the dev server on localhost:4321
+npm run dev      # start the dev server
 npm run build    # production build into dist/
 npm run preview  # preview the production build
 ```
+
+The site is served under its `base` path, so the dev server shows it at
+<http://localhost:4321/df26-architects-guide-to-prompt-engineering/> - the root URL returns a 404.
 
 Formatting is checked in CI:
 
@@ -60,7 +64,7 @@ npm run og:generate
 All session content sits in typed data files, separate from the presentation layer - editing a rule or a demo never means touching a component:
 
 ```
-src/data/session.ts   session metadata, speakers, objectives
+src/data/session.ts   session metadata, speakers, objectives, meta description
 src/data/problem.ts   symptoms and the questions architects ask instead
 src/data/controls.ts  the four control moves + protocol skeleton lines
 src/data/demos.ts     the three worked examples and their result artifacts
