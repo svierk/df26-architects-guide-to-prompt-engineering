@@ -14,7 +14,7 @@ The complete session on a single page, written to stand on its own for anyone wh
 
 | Section                | What you get                                                                                                                                              |
 | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **The problem**        | Why a Salesforce org - a running system, not a metadata dump - breaks an unstructured prompt                                                              |
+| **The problem**        | The symptoms teams report when AI disappoints, and the questions an architect asks instead                                                                |
 | **Four control moves** | Context, Constraints, Tools, Output + Evaluation                                                                                                          |
 | **The protocol**       | The copy-and-paste skeleton that packages all four into one prompt                                                                                        |
 | **Prompt builder**     | Fill the four control moves, watch the prompt assemble, and get scored against the six rules - live, in your browser                                      |
@@ -61,7 +61,7 @@ All session content sits in typed data files, separate from the presentation lay
 
 ```
 src/data/session.ts   session metadata, speakers, objectives
-src/data/problem.ts   symptoms, architect questions, root causes
+src/data/problem.ts   symptoms and the questions architects ask instead
 src/data/controls.ts  the four control moves + protocol skeleton lines
 src/data/demos.ts     the three worked examples and their result artifacts
 src/data/rules.ts     the six rules of the field guide

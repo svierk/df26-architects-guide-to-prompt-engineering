@@ -1,5 +1,5 @@
 ---
-import { architectQuestions, causes, symptoms } from '../data/problem';
+import { architectQuestions, symptoms } from '../data/problem';
 ---
 
 <section class="section" id="problem">
@@ -20,20 +20,6 @@ import { architectQuestions, causes, symptoms } from '../data/problem';
       <ul class="questions__list">
         {architectQuestions.map((question) => <li>{question}</li>)}
       </ul>
-    </div>
-
-    <h3 class="causes__heading">A Salesforce org is a running system - not a metadata dump</h3>
-    <div class="grid grid-3">
-      {
-        causes.map((cause) => (
-          <article class="card card--hover cause">
-            <h4 class="cause__title">{cause.title}</h4>
-            <p class="cause__lead">{cause.lead}</p>
-            <p class="cause__detail">{cause.detail}</p>
-            <p class="cause__consequence">{cause.consequence}</p>
-          </article>
-        ))
-      }
     </div>
   </div>
 </section>
@@ -63,7 +49,6 @@ import { architectQuestions, causes, symptoms } from '../data/problem';
     border: 1px solid var(--border-strong);
     border-radius: 14px;
     padding: 1.4rem 1.5rem;
-    margin-bottom: 3rem;
   }
 
   .questions__title {
@@ -88,37 +73,6 @@ import { architectQuestions, causes, symptoms } from '../data/problem';
   .questions__list li::before {
     content: '→ ';
     color: var(--accent);
-  }
-
-  .causes__heading {
-    font-size: 1.15rem;
-    margin-bottom: 1.1rem;
-  }
-
-  .cause__title {
-    font-size: 1.05rem;
-    margin-bottom: 0.6rem;
-  }
-
-  .cause__lead {
-    font-weight: 600;
-    font-size: 0.95rem;
-    margin-bottom: 0.6rem;
-  }
-
-  .cause__detail,
-  .cause__consequence {
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    margin-bottom: 0.6rem;
-  }
-
-  .cause__consequence {
-    margin: 0.9rem 0 0;
-    padding-top: 0.8rem;
-    border-top: 1px solid var(--border);
-    color: var(--text);
-    font-weight: 500;
   }
 
   @media (max-width: 900px) {
