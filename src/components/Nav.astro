@@ -75,8 +75,7 @@ const links = [
 </header>
 
 <script>
-  // Theme choice is persisted so it survives a reload and the QR-code visit
-  // of an attendee who set it once during the session.
+  // Theme choice is persisted so it survives a reload and any later visit.
   const toggle = document.getElementById('theme-toggle');
 
   toggle?.addEventListener('click', () => {

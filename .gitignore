@@ -12,6 +12,9 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+# locally generated QR code for the published page URL
+qr-code.svg
+
 # environment variables
 .env
 .env.production

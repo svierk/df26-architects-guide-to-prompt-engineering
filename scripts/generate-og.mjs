@@ -37,7 +37,7 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" v
         fill="url(#accent)">Prompt Engineering</text>
 
   <text x="80" y="410" font-family="Helvetica, Arial, sans-serif" font-size="30" fill="#9aa3b2">
-    Prompting isn't wording — it's the controls around the model.</text>
+    Prompting isn't wording - it's the controls around the model.</text>
 
   ${['CONTEXT', 'CONSTRAINTS', 'TOOLS', 'OUTPUT'].reduce((acc, label, index) => {
     const width = [190, 268, 148, 176][index];

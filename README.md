@@ -1,6 +1,6 @@
 # Architects' Guide to Prompt Engineering
 
-🧭 Session asset for **"An Architect's Guide to Prompt Engineering"** — Dreamforce '26, San Francisco.
+🧭 Session asset for **"An Architect's Guide to Prompt Engineering"** - Dreamforce '26, San Francisco.
 
 **→ [svierk.github.io/df26-architects-guide-to-prompt-engineering](https://svierk.github.io/df26-architects-guide-to-prompt-engineering/)**
 
@@ -10,18 +10,18 @@
 
 ## What this is
 
-The complete session on a single page — built so it stands on its own for anyone who scans the QR code from the room, or gets the link afterwards:
+The complete session on a single page, written to stand on its own for anyone who arrives at the link without any other context:
 
 | Section                | What you get                                                                                                                                              |
 | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **The problem**        | Why a Salesforce org — a running system, not a metadata dump — breaks an unstructured prompt                                                              |
+| **The problem**        | Why a Salesforce org - a running system, not a metadata dump - breaks an unstructured prompt                                                              |
 | **Four control moves** | Context, Constraints, Tools, Output + Evaluation                                                                                                          |
 | **The protocol**       | The copy-and-paste skeleton that packages all four into one prompt                                                                                        |
-| **Prompt builder**     | Fill the four control moves, watch the prompt assemble, and get scored against the six rules — live, in your browser                                      |
-| **Three demos**        | Org merger, order-sync cutover and FSC metadata governance — each shown as an unstructured prompt vs. a structured protocol, with the artifact it returns |
+| **Prompt builder**     | Fill the four control moves, watch the prompt assemble, and get scored against the six rules - live, in your browser                                      |
+| **Three demos**        | Org merger, order-sync cutover and FSC metadata governance - each shown as an unstructured prompt vs. a structured protocol, with the artifact it returns |
 | **Six rules**          | The field guide, each rule traced back to the example it came from                                                                                        |
 
-The prompt builder keeps your draft in `localStorage` — nothing is sent anywhere, and there is no analytics or tracking on the page.
+The prompt builder keeps your draft in `localStorage` - nothing is sent anywhere, and there is no analytics or tracking on the page.
 
 ## Session objectives
 
@@ -47,18 +47,17 @@ npm run prettier         # format
 npm run prettier:verify  # list files that would change
 ```
 
-### Regenerating the assets
+### Regenerating the social preview
 
-Both are committed to `public/` and only need regenerating when the published URL or the session title changes:
+`public/og-image.png` is committed and only needs regenerating when the session title or the published URL changes:
 
 ```bash
-npm run qr:generate  # public/qr.svg  - the QR code for the closing slide
-npm run og:generate  # public/og-image.png - the social preview image
+npm run og:generate
 ```
 
 ### Where the content lives
 
-All session content sits in typed data files, separate from the presentation layer — editing a rule or a demo never means touching a component:
+All session content sits in typed data files, separate from the presentation layer - editing a rule or a demo never means touching a component:
 
 ```
 src/data/session.ts   session metadata, speakers, objectives
@@ -68,7 +67,7 @@ src/data/demos.ts     the three worked examples and their result artifacts
 src/data/rules.ts     the six rules of the field guide
 ```
 
-The readiness check in the builder lives in `src/components/PromptBuilder.astro` — one heuristic per rule, deliberately simple and readable.
+The readiness check in the builder lives in `src/components/PromptBuilder.astro` - one heuristic per rule, deliberately simple and readable.
 
 ## Deployment
 
@@ -76,9 +75,9 @@ Every push to `main` builds the site and publishes it to GitHub Pages via [`.git
 
 ## Speakers
 
-- [Chetan Chugh](https://www.linkedin.com/in/chetan-chugh-18264b34/) — Chief Architect & Salesforce CTA, Capgemini
-- [Sebastiano Schwarz](https://www.linkedin.com/in/sebastiano-schwarz/) — Salesforce CTO Germany, Capgemini
+- [Chetan Chugh](https://www.linkedin.com/in/chetan-chugh-18264b34/) - Chief Architect & Salesforce CTA, Capgemini
+- [Sebastiano Schwarz](https://www.linkedin.com/in/sebastiano-schwarz/) - Salesforce CTO Germany, Capgemini
 
 ## License
 
-[MIT](LICENSE) — take the protocol, the rules and the page structure and reuse them in your own sessions.
+[MIT](LICENSE) - take the protocol, the rules and the page structure and reuse them in your own sessions.

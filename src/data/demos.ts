@@ -34,7 +34,7 @@ export const demos: Demo[] = [
     label: 'Org merger',
     title: 'Assessing an org merger',
     scenario: 'Org 1 (acquirer, ~12 years old) → Org 2 (acquired), ahead of the Q3 code freeze.',
-    unstructured: `I pulled the metadata export for Org 1 — objects are Store_Location__c, Product_Bundle__c, and a legacy Order__c that doesn't match our Retail_Order__c.
+    unstructured: `I pulled the metadata export for Org 1 - objects are Store_Location__c, Product_Bundle__c, and a legacy Order__c that doesn't match our Retail_Order__c.
 
 Can you look through this and tell me what's going on before we merge it into Org 2 ahead of the Q3 code freeze?
 
@@ -47,7 +47,7 @@ Flag anything risky.`,
       tools:
         'Tooling API for active automation (Flows, triggers, Process Builder, ValidationRule) + MetadataComponentDependency (Beta, 2,000-row cap) + schema diff on Order__c vs Retail_Order__c.',
       output:
-        'merge-readiness-scorecard.md — ERD + risk-scored table (Object, Risk Type, Severity, Merge Blocker, Remediation). Self-check: every Blocker = Yes row must cite the field or class it flags.'
+        'merge-readiness-scorecard.md - ERD + risk-scored table (Object, Risk Type, Severity, Merge Blocker, Remediation). Self-check: every Blocker = Yes row must cite the field or class it flags.'
     },
     result: {
       file: 'merge-readiness-scorecard.md',
@@ -65,17 +65,17 @@ Flag anything risky.`,
           'Automation conflict',
           'Medium',
           'No',
-          '2 Flows + StoreLocationTrigger.cls both update Inventory_Count__c — consolidate before go-live'
+          '2 Flows + StoreLocationTrigger.cls both update Inventory_Count__c - consolidate before go-live'
         ],
         [
           'Product_Bundle__c',
           'Non-bulkified DML',
           'High',
           'Yes',
-          'ProductBundleHandler.cls performs DML inside a for-loop — refactor before merge'
+          'ProductBundleHandler.cls performs DML inside a for-loop - refactor before merge'
         ]
       ],
-      note: 'This is the whole artifact — not a narrative summary. It drops straight into the merge steering-committee deck, and the same table format works for the next acquisition’s metadata too.'
+      note: 'This is the whole artifact - not a narrative summary. It drops straight into the merge steering-committee deck, and the same table format works for the next acquisition’s metadata too.'
     },
     rules: [1, 2]
   },
@@ -84,7 +84,7 @@ Flag anything risky.`,
     label: 'Order sync',
     title: 'Scoping the order sync',
     scenario: 'Retiring a point-to-point Apex integration to SAP S/4HANA in favour of MuleSoft Anypoint.',
-    unstructured: `We're retiring OrderSyncService.cls — the point-to-point Apex integration to SAP S/4HANA — for MuleSoft Anypoint.
+    unstructured: `We're retiring OrderSyncService.cls - the point-to-point Apex integration to SAP S/4HANA - for MuleSoft Anypoint.
 
 Before we scope the build, can you look at logic inside classes like OrderSyncService.cls & SAPCalloutHandler.cls and explain how the sync to SAP actually works end to end?`,
     protocol: {
@@ -95,7 +95,7 @@ Before we scope the build, can you look at logic inside classes like OrderSyncSe
       tools:
         'Static code search across both classes + Tooling API MetadataComponentDependency (Beta) + OpenAPI diff against the MuleSoft Order API spec.',
       output:
-        'integration-cutover-checklist.md — sequence diagram + table (Endpoint, Current Pattern, Target Pattern, Risk, Cutover Order). Self-check: every Risk = High row must name the limit it violates.'
+        'integration-cutover-checklist.md - sequence diagram + table (Endpoint, Current Pattern, Target Pattern, Risk, Cutover Order). Self-check: every Risk = High row must name the limit it violates.'
     },
     result: {
       file: 'integration-cutover-checklist.md',
@@ -105,25 +105,25 @@ Before we scope the build, can you look at logic inside classes like OrderSyncSe
           'POST /sap/orders (SAPCalloutHandler.sendOrder)',
           'Sync, called from Retail_Order__c after-insert trigger',
           'Async via MuleSoft Order API',
-          'High — callout in trigger risks blocking the save',
+          'High - callout in trigger risks blocking the save',
           '1'
         ],
         [
           'SAP inventory pull (OrderSyncService.pullInventory)',
           'Async @future, no retry logic',
           'MuleSoft scheduled batch w/ retry',
-          'Medium — missing idempotency key',
+          'Medium - missing idempotency key',
           '2'
         ],
         [
           'Warehouse_Transfer__c sync (OrderSyncService.pushTransfer)',
           'Async Queueable, callout after DML in same txn',
           'MuleSoft event-driven flow',
-          'High — throws “uncommitted work pending”',
+          'High - throws “uncommitted work pending”',
           '3'
         ]
       ],
-      note: 'Every row is scoped and sequenced — an estimate-ready cutover plan, not a description. The same table shape works for the next point-to-point integration you retire.'
+      note: 'Every row is scoped and sequenced - an estimate-ready cutover plan, not a description. The same table shape works for the next point-to-point integration you retire.'
     },
     rules: [3, 4]
   },
@@ -131,7 +131,7 @@ Before we scope the build, can you look at logic inside classes like OrderSyncSe
     id: 'fsc-metadata',
     label: 'FSC metadata',
     title: 'Designing agent metadata in an Industries Cloud org',
-    scenario: 'Business admins keep requesting new fields on FSC objects — and half of them break the next release.',
+    scenario: 'Business admins keep requesting new fields on FSC objects - and half of them break the next release.',
     unstructured: `We keep getting requests from business admins to add new fields to Financial Account and other FSC objects, and half the time it breaks something on the next release.
 
 Can you help design an Agentforce agent that handles these requests instead of admins going straight to Setup?`,
@@ -139,11 +139,11 @@ Can you help design an Agentforce agent that handles these requests instead of a
       context:
         'FinServ__FinancialAccount__c, FinServ__FinancialAccountRole__c, the standard ActionPlan / ActionPlanTemplate objects, and the Household record type with FinServ__ReciprocalRole__c relationships already in the org.',
       constraints:
-        'Governance policy, not a platform limit — only propose a custom object with a lookup, never a custom field on a FinServ__ object. Discover existing automation before drafting. Before deployment always seek an explicit sign-off.',
+        'Governance policy, not a platform limit - only propose a custom object with a lookup, never a custom field on a FinServ__ object. Discover existing automation before drafting. Before deployment always seek an explicit sign-off.',
       tools:
         'Metadata Describe API scoped to the FinServ__ namespace, Tooling API MetadataComponentDependency (Beta) to find existing Action Plan Templates and automation, package version check.',
       output:
-        'metadata-change-request.md — requested change, discovery summary, proposed custom-object design and an explicit approval flag. Self-check: Approval defaults to Needs Approval unless sign-off appears in Context.'
+        'metadata-change-request.md - requested change, discovery summary, proposed custom-object design and an explicit approval flag. Self-check: Approval defaults to Needs Approval unless sign-off appears in Context.'
     },
     result: {
       file: 'metadata-change-request.md',
@@ -159,11 +159,11 @@ Can you help design an Agentforce agent that handles these requests instead of a
         ],
         [
           'Proposed Design',
-          'New custom object Loan_Application__c — lookup to FinServ__FinancialAccount__c and Account (Household); triggers the existing “Loan Underwriting” Action Plan Template via Flow'
+          'New custom object Loan_Application__c - lookup to FinServ__FinancialAccount__c and Account (Household); triggers the existing “Loan Underwriting” Action Plan Template via Flow'
         ],
-        ['Approval Status', '⚠️ Needs Architect Approval — agent has no deploy permission']
+        ['Approval Status', '⚠️ Needs Architect Approval - agent has no deploy permission']
       ],
-      note: 'The agent never touches Setup. It hands a human architect exactly what they need to approve or reject in under a minute — controlled execution, not unattended automation.'
+      note: 'The agent never touches Setup. It hands a human architect exactly what they need to approve or reject in under a minute - controlled execution, not unattended automation.'
     },
     rules: [5, 6]
   }

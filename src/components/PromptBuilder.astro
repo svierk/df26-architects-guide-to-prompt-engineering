@@ -8,7 +8,7 @@ const fields = [
     id: 'context',
     key: 'CONTEXT',
     label: 'Context',
-    hint: 'Name the objects, classes and org — not the category.',
+    hint: 'Name the objects, classes and org - not the category.',
     placeholder:
       'Object/field metadata for Retail_Order__c and Warehouse_Transfer__c in the UAT sandbox, plus OrderSyncService.cls …'
   },
@@ -18,7 +18,7 @@ const fields = [
     label: 'Constraints',
     hint: 'Pair every prohibition with the fallback action.',
     placeholder:
-      'Never propose a custom field on a managed FinServ__ object — propose a custom object with a lookup instead. Flag anything inferred …'
+      'Never propose a custom field on a managed FinServ__ object - propose a custom object with a lookup instead. Flag anything inferred …'
   },
   {
     id: 'tools',
@@ -33,7 +33,7 @@ const fields = [
     label: 'Output + validation',
     hint: 'Define the artifact shape and the self-check it must pass.',
     placeholder:
-      'merge-readiness-scorecard.md — table (Object, Risk Type, Severity, Blocker, Remediation). Self-check: every Blocker = Yes row must cite the field or class it flags …'
+      'merge-readiness-scorecard.md - table (Object, Risk Type, Severity, Blocker, Remediation). Self-check: every Blocker = Yes row must cite the field or class it flags …'
   }
 ] as const;
 
@@ -57,7 +57,7 @@ const labels = Object.fromEntries(
     <h2 class="section-title">Build your own prompt</h2>
     <p class="section-subtitle">
       Fill the four control moves and the prompt assembles itself on the right. The readiness check applies the six
-      rules of the field guide to what you wrote — it is the same self-check you would ask a model to run. Your draft
+      rules of the field guide to what you wrote - it is the same self-check you would ask a model to run. Your draft
       stays in this browser.
     </p>
 
@@ -166,7 +166,7 @@ const labels = Object.fromEntries(
     {
       rule: 1,
       label: 'Context names real artifacts',
-      hint: 'Add API names — Retail_Order__c, OrderSyncService.cls — not “the order object”.',
+      hint: 'Add API names - Retail_Order__c, OrderSyncService.cls - not “the order object”.',
       test: (draft) => /(__c|__mdt|__e|__b|\.cls|\.trigger|\bFinServ__|\bnamespace\b)/i.test(draft.context)
     },
     {
@@ -181,7 +181,7 @@ const labels = Object.fromEntries(
     {
       rule: 5,
       label: 'Constraints pair a guardrail with a fallback',
-      hint: 'Every “never do X” needs an “instead do Y” — otherwise the model picks its own way around.',
+      hint: 'Every “never do X” needs an “instead do Y” - otherwise the model picks its own way around.',
       test: (draft) =>
         /(never|not|no |exclude|avoid|only|must not|don’t|don't)/i.test(draft.constraints) &&
         /(instead|rather than|fall back|fallback|otherwise|use |propose |flag )/i.test(draft.constraints)
@@ -189,7 +189,7 @@ const labels = Object.fromEntries(
     {
       rule: 3,
       label: 'Tools are named and callable',
-      hint: 'Name the API, query or search — Tooling API, Metadata Describe, code search, sandbox execution.',
+      hint: 'Name the API, query or search - Tooling API, Metadata Describe, code search, sandbox execution.',
       test: (draft) =>
         /(api|describe|tooling|metadata|soql|query|search|diff|sandbox|execute|cli|spec|dependency|mcp)/i.test(
           draft.tools
@@ -207,7 +207,7 @@ const labels = Object.fromEntries(
     {
       rule: 6,
       label: 'Output carries a self-check',
-      hint: 'Add the check the answer must pass — “every High row must name the limit it violates”.',
+      hint: 'Add the check the answer must pass - “every High row must name the limit it violates”.',
       test: (draft) =>
         /(self-check|self check|must cite|must name|must include|verify|validate|defaults to|discovery|before it)/i.test(
           draft.output
@@ -237,7 +237,7 @@ const labels = Object.fromEntries(
       output.textContent = prompt;
       output.classList.toggle('is-empty', prompt === '');
       if (prompt === '') {
-        output.textContent = 'Fill a control move on the left — or load one of the three worked examples above.';
+        output.textContent = 'Fill a control move on the left - or load one of the three worked examples above.';
       }
     }
 
