@@ -11,10 +11,14 @@ export const session = {
   location: 'San Francisco, USA',
   date: '2026-09-15',
   repo: 'https://github.com/svierk/df26-architects-guide-to-prompt-engineering',
-  /** Shown in the hero and used as the meta description of the page. */
+  /**
+   * The premise of the session. The hero states it in its own markup, because
+   * it emphasises part of the sentence; this copy opens the meta description.
+   */
   premise: 'Most teams think prompting is about wording. It isn’t - it’s about the controls.',
-  summary:
-    'The four control moves, the protocol that packages them, six rules and three worked Salesforce examples - the complete session in a single page.',
+  /** Meta description of the page, used for search results and link previews. */
+  description:
+    'The four control moves, the protocol that packages them, six rules and three worked Salesforce examples for prompting as system design.',
   /** The learning objectives the session was accepted with. */
   objectives: [
     'Design prompts using context, constraints, tools and structured outputs.',
