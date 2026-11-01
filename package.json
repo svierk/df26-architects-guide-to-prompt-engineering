@@ -24,7 +24,7 @@
     "prettier:verify": "prettier --list-different \"**/*.{astro,css,js,mjs,json,md,ts,yml,yaml}\""
   },
   "dependencies": {
-    "astro": "^7.2.10"
+    "astro": "^7.3.3"
   },
   "devDependencies": {
     "@resvg/resvg-js": "^2.6.2",
